@@ -3,38 +3,45 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Exam</title>
+    <title>Exam Application</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@9.10.0/dist/sweetalert2.min.css">
     <link rel="stylesheet" href="./style.css">
 </head>
 <body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container">
+            <a class="navbar-brand" href="#">Exam Application</a>
+        </div>
+    </nav>
+
     <div class="container mt-3">
         <div class="row">
-            <div class="col-lg-3 col-sm-12">
+            <div class="col-lg-3 col-sm-12 my-2">
                 <!-- Colomn Untuk Pagination -->
                 <div class="card">
                     <div class="card-body">
+                        <div class="name-user"></div>
                         <span class="number-btn text-center"></span>
                     </div>
                 </div>
             </div>
-            <div class="col-lg-9 col-sm-12">
+            <div class="col-lg-9 col-sm-12 my-2">
                 <!-- Colomn untuk tampil soal -->
                 <div class="card">
                     <div class="card-header text-right">
                         <div class="btn btn-md btn-dark" id="time">00 : 00</div>
                     </div>
                     <div class="card-body">
-                        <div class="quiz-container">
-                            <div id="quiz"></div>
-                        </div>
-                        <hr>
                         <div class="btn-action text-center">
                             <button id="previous" class="btn btn-lg btn-secondary">Kembali</button>
                             <button id="next" class="btn btn-lg btn-success" >Selajutnya</button>
                             <button id="submit" class="btn btn-lg btn-outline-danger">Selesai</button>
                         </div>
+                        <hr>
+                        <div class="quiz-container">
+                            <div id="quiz"></div>
+                        </div>                        
                     </div>
                 </div>
             </div>
@@ -51,7 +58,7 @@
         let randomQuestion = myQuestions.sort((a, b) => {return 0.5 - Math.random()})
 
         // melakukan pemotongan array batasan soal yang ingin diambil
-        let sliceQuestion = randomQuestion.slice(0, 3)
+        let sliceQuestion = randomQuestion.slice(0, 15)
 
         function buildQuiz() {
             const output = []
@@ -90,7 +97,8 @@
 
             let numCorrect = 0
             let numWrong = 0
-
+            let answerUser = []
+            let codeQuestion = []
             sliceQuestion.forEach((currentQuestion, questionNumber) => {
                 const answerContainer = answerContainers[questionNumber]
 
@@ -103,12 +111,14 @@
                     numWrong++
                 }
 
+                let answer = [currentQuestion.code, userAnswer]
+                answerUser.push(answer)
             })
-            console.log(numCorrect)
-            console.log(numWrong)
-            sessionStorage.setItem('questionLength', sliceQuestion.length)
-            sessionStorage.setItem('correct', numCorrect)
-            sessionStorage.setItem('wrong', numWrong)
+
+            localStorage.setItem('questionLength', sliceQuestion.length)
+            localStorage.setItem('correct', numCorrect)
+            localStorage.setItem('wrong', numWrong)
+            localStorage.setItem('userAnswer', answerUser)
             location.replace('./hasil.html')
         }
         
@@ -203,19 +213,14 @@
 
             if(startMinutes === 0 && seconds === 0)
                 results()
-
-            if(startMinutes > 10)
-                submitButton.setAttribute("disabled", "")
-
-            if(startMinutes < 10) {
-                submitButton.removeAttribute("disabled", "")
-                submitButton.classList.remove('btn-outline-danger')
-                submitButton.classList.add('btn-danger')
-            }
+            
         }
 
         countdown()
         
+        const nameUser = document.querySelector(".name-user")
+        const localNameUser = localStorage.getItem("name")
+        nameUser.innerHTML = `<h6>${localNameUser}</h6>`
 
     </script>
 </body>

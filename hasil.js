@@ -1,7 +1,8 @@
-let correctAnswer = sessionStorage.getItem("correct")
-let wrongAnswer = sessionStorage.getItem("wrong")
-let nameUser = sessionStorage.getItem("name")
-let questionLength = sessionStorage.getItem("questionLength")
+let correctAnswer = localStorage.getItem("correct")
+let wrongAnswer = localStorage.getItem("wrong")
+let answerUser = localStorage.getItem("userAnswer")
+let nameUser = localStorage.getItem("name")
+let questionLength = localStorage.getItem("questionLength")
 
 let quizResults = {}
 quizResults.results = []
@@ -17,81 +18,30 @@ if(score >= 65) {
 }
 score = score < 100 ? score.toFixed(2) : score
 
-result.nameUser = nameUser
-result.correctAnswer = correctAnswer
-result.wrongAnswer = wrongAnswer
-result.scoreUser = score
-result.noteUser = note
 
-if(localStorage && localStorage.getItem('quizMaster')) {
-    quizResults = JSON.parse(localStorage.getItem('quizMaster'))
+// Your web app's Firebase configuration
+var firebaseConfig = {
+    apiKey: "AIzaSyBDiqde_YlNmd4i9WmnDLO4XclbWTwd76E",
+    authDomain: "exam-application-c4943.firebaseapp.com",
+    databaseURL: "https://exam-application-c4943.firebaseio.com",
+    projectId: "exam-application-c4943",
+    storageBucket: "exam-application-c4943.appspot.com",
+    messagingSenderId: "150768748127",
+    appId: "1:150768748127:web:c0fa951ac23407cae97dea",
+    measurementId: "G-66290TJEHE"
+};
+// Initialize Firebase
+firebase.initializeApp(firebaseConfig);
+firebase.analytics();
 
-    if(result.correctAnswer != "" && result.wrongAnswer != "") {
-        quizResults.results.push(result)
-    }
-
-    localStorage.setItem('quizMaster', JSON.stringify(quizResults))
-    clearResults()
-} else {
-    localStorage.setItem('quizMaster', JSON.stringify(quizResults))
-    if(result.correctAnswer != "" && result.wrongAnswer != "") {
-        quizResults.results.push(result)
-    }
-
-    localStorage.setItem('quizMaster', JSON.stringify(quizResults))
-    clearResults()
+let d = new Date();
+const data = {
+    useName         : nameUser,
+    correctAnswer   : correctAnswer,
+    wrongAnswer     : wrongAnswer,
+    answerUser      : answerUser,
+    score           : score,
+    date            : `${d.getDate()}-${d.getMonth()}-${d.getFullYear()} ${d.getHours()}:${d.getMinutes()}`
 }
-
-function clearResults() {
-    sessionStorage.setItem("correct", "")
-    sessionStorage.setItem("wrong", "")
-    sessionStorage.setItem("name", "")
-}
-
-function resultsHistory(testNumber, nameUser, correctAnswer, wrongAnswer, scoreUser, noteUser) {
-    let resultsContainer = document.querySelector(".resultsContainer")
-
-    let tr = document.createElement('tr')
-    let html = `
-        <td>${testNumber}</td>
-        <td>${nameUser}</td>
-        <td>${correctAnswer}</td>
-        <td>${wrongAnswer}</td>
-        <td>${scoreUser}</td>
-        <td>${noteUser}</td>
-    `
-    tr.innerHTML = html
-    resultsContainer.appendChild(tr)
-}
-
-function newResults(numCorrect, numWrong, score) {
-
-    let newScore = document.querySelector("#new-score")
-    let wrongCorrect = document.querySelector("#wrong-correct")
-
-    newScore.innerHTML = `Score yang anda peroleh<br/>${score}`
-    wrongCorrect.innerHTML =`Jawaban Benar: <b>${numCorrect}</b>, Jawaban Salah: <b>${numWrong}</b><hr>`
-}
-
-document.addEventListener("DOMContentLoaded", function(){
-    let quizMaster = quizResults["results"].length
-    let testNumber = 1
-
-    for(let i=0; i<quizMaster; i++) {
-        if(quizResults["results"][i].correctAnswer != "" && quizResults["results"][i].wrongAnswer != "") {
-            resultsHistory(testNumber, quizResults["results"][i].nameUser, quizResults["results"][i].correctAnswer, quizResults["results"][i].wrongAnswer, quizResults["results"][i].scoreUser, quizResults["results"][i].noteUser)
-        }
-        testNumber++
-    }
-
-    if(result.nameUser != ""){
-        newResults(quizResults["results"][quizMaster-1].correctAnswer, quizResults["results"][quizMaster-1].wrongAnswer, quizResults["results"][quizMaster-1].scoreUser)
-    }
-
-    let tryAgain = document.querySelector("#try-again")
-    tryAgain.addEventListener("click", function(){
-        location.href = './index.html'
-        clearResults()
-    })
-})
-
+var database = firebase.database();
+database.ref(`score`).push(data);
