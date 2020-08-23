@@ -67,12 +67,17 @@
             sliceQuestion.forEach((currentQuestion, questionNumber) => {
                 const answers = []
 
-                for(letter in currentQuestion.answers) {
+                const randomAnswer = Object.entries(currentQuestion.answers)
+                let rand = randomAnswer.sort((a, b) => {return 0.5 - Math.random()})
+                let convertObjet = Object.fromEntries(rand)
+                console.log(convertObjet)
+
+                for(letter in convertObjet) {
                     answers.push(
                         `
                            <label>
                                 <input type="radio" name="question${questionNumber}" value="${letter}"> 
-                                <span>${letter}: ${currentQuestion.answers[letter]}</span>
+                                <span> ${currentQuestion.answers[letter]}</span>
                             </label> 
                         `
                     )
@@ -192,7 +197,7 @@
         }
 
         let showTime = document.querySelector("#time")
-        let startMinutes = 10
+        let startMinutes = 50
         let seconds = 0
 
         function countdown() {

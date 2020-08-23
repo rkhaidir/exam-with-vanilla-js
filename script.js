@@ -111,10 +111,10 @@ const myQuestions = [
         question: "Hasil konversi dari bilangan oktal 76 ke heksadesimal adalah....",
         answers: {
             a: "33",
-            b: "34",
+            b: "3D",
             c: "3C",
-            d: "3D",
-            e: "3E"
+            d: "3E",
+            e: "3F"
         },
         code : 10,
         correctAnswer: "e"
