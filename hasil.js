@@ -44,4 +44,13 @@ const data = {
     date            : `${d.getDate()}-${d.getMonth()}-${d.getFullYear()} ${d.getHours()}:${d.getMinutes()}`
 }
 var database = firebase.database();
-database.ref(`score`).push(data);
+database.ref(`score/10B_RPL`).push(data);
+removeLocal()
+
+function removeLocal() {
+    localStorage.removeItem("correct")
+    localStorage.removeItem("wrong")
+    localStorage.removeItem("userAnswer")
+    localStorage.removeItem("name")
+    localStorage.removeItem("questionLength")
+}

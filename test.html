@@ -35,7 +35,7 @@
                     <div class="card-body">
                         <div class="btn-action text-center">
                             <button id="previous" class="btn btn-lg btn-secondary">Kembali</button>
-                            <button id="next" class="btn btn-lg btn-success" >Selajutnya</button>
+                            <button id="next" class="btn btn-lg btn-success" >Selanjutnya</button>
                             <button id="submit" class="btn btn-lg btn-outline-danger">Selesai</button>
                         </div>
                         <hr>
@@ -70,7 +70,6 @@
                 const randomAnswer = Object.entries(currentQuestion.answers)
                 let rand = randomAnswer.sort((a, b) => {return 0.5 - Math.random()})
                 let convertObjet = Object.fromEntries(rand)
-                console.log(convertObjet)
 
                 for(letter in convertObjet) {
                     answers.push(

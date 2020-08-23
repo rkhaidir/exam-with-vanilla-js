@@ -111,13 +111,13 @@ const myQuestions = [
         question: "Hasil konversi dari bilangan oktal 76 ke heksadesimal adalah....",
         answers: {
             a: "33",
-            b: "3D",
+            b: "34",
             c: "3C",
-            d: "3E",
-            e: "3F"
+            d: "3D",
+            e: "3E" //terganti
         },
         code : 10,
-        correctAnswer: "e"
+        correctAnswer: "e" 
     },
     {
         question: "Bentuk sandi BCD dari bilangan desimal 776 adalah....",
