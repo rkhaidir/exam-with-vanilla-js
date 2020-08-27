@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Exam Application</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@9.10.0/dist/sweetalert2.min.css">
+    <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container">
+            <a class="navbar-brand" href="#">Exam Application</a>
+        </div>
+    </nav>
+
+    <div class="container mt-3">
+        <div class="row">
+            <div class="col-lg-3 col-sm-12 my-2">
+                <!-- Colomn Untuk Pagination -->
+                <div class="card">
+                    <div class="card-body">
+                        <div class="name-user"></div>
+                        <span class="number-btn text-center"></span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-9 col-sm-12 my-2">
+                <!-- Colomn untuk tampil soal -->
+                <div class="card">
+                    <div class="card-header text-right">
+                        <div class="btn btn-md btn-dark" id="time">00 : 00</div>
+                    </div>
+                    <div class="card-body">
+                        <div class="btn-action text-center">
+                            <button id="previous" class="btn btn-lg btn-secondary">Kembali</button>
+                            <button id="next" class="btn btn-lg btn-success" >Selanjutnya</button>
+                            <button id="submit" class="btn btn-lg btn-outline-danger">Selesai</button>
+                        </div>
+                        <hr>
+                        <div class="quiz-container">
+                            <div id="quiz"></div>
+                        </div>                        
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@9.10.0/dist/sweetalert2.min.js"></script>
+    <script src="./script.js"></script>
+    <script>
+        // melakukan random pada isi array di variabel myQuestion
+        let randomQuestion = myQuestions.sort((a, b) => {return 0.5 - Math.random()})
+
+        // melakukan pemotongan array batasan soal yang ingin diambil
+        let sliceQuestion = randomQuestion.slice(0, 15)
+
+        function buildQuiz() {
+            const output = []
+            let currentNumber = 1
+
+            sliceQuestion.forEach((currentQuestion, questionNumber) => {
+                const answers = []
+
+                const randomAnswer = Object.entries(currentQuestion.answers)
+                let rand = randomAnswer.sort((a, b) => {return 0.5 - Math.random()})
+                let convertObjet = Object.fromEntries(rand)
+
+                for(letter in convertObjet) {
+                    answers.push(
+                        `
+                           <label>
+                                <input type="radio" name="question${questionNumber}" value="${letter}"> 
+                                <span> ${currentQuestion.answers[letter]}</span>
+                            </label> 
+                        `
+                    )
+                }
+
+                output.push(
+                    `
+                        <div class="slide">
+                            <div class="question">${currentNumber}. ${currentQuestion.question}</div>
+                            <hr>
+                            <div class="answers">${answers.join("")}</div>
+                        </div>
+                    `
+                )
+                currentNumber++
+            })
+            questionContainer.innerHTML = output.join("")
+        }
+
+        function results() {
+            const answerContainers = questionContainer.querySelectorAll('.answers')
+
+            let numCorrect = 0
+            let numWrong = 0
+            let answerUser = []
+            let codeQuestion = []
+            sliceQuestion.forEach((currentQuestion, questionNumber) => {
+                const answerContainer = answerContainers[questionNumber]
+
+                const selector = `input[name=question${questionNumber}]:checked`
+                const userAnswer = (answerContainer.querySelector(selector) || {}).value
+
+                if(userAnswer === currentQuestion.correctAnswer) {
+                    numCorrect++
+                } else {
+                    numWrong++
+                }
+
+                let answer = [currentQuestion.code, userAnswer]
+                answerUser.push(answer)
+            })
+
+            localStorage.setItem('questionLength', sliceQuestion.length)
+            localStorage.setItem('correct', numCorrect)
+            localStorage.setItem('wrong', numWrong)
+            localStorage.setItem('userAnswer', answerUser)
+            location.replace('./hasil.html')
+        }
+        
+        function showSlide(n) {
+            slides[currentSlide].classList.remove('active-slide')
+            slides[n].classList.add('active-slide')
+            currentSlide = n
+
+            if(currentSlide === 0) {
+                previousButton.style.display = 'none'
+            } else {
+                previousButton.style.display = 'inline-block'
+            }
+
+            if(currentSlide === slides.length-1) {
+                nextButton.style.display = 'none'
+                submitButton.style.display = 'inline-block'
+            } else {
+                nextButton.style.display = 'inline-block'
+                submitButton.style.display = 'none'
+            }
+        }
+
+        function showNextSlide() {
+            showSlide(currentSlide + 1)
+        }
+
+        function showPreviousSlide() {
+            showSlide(currentSlide - 1)
+        }
+
+        function paginationSlide(n) {
+            showSlide(n)
+        }
+        
+        // DOM Show question
+        let questionContainer = document.getElementById("quiz")
+        let nextButton = document.querySelector("#next")
+        let previousButton = document.querySelector("#previous")
+        let submitButton = document.querySelector("#submit")
+        buildQuiz()
+        const slides = document.querySelectorAll(".slide")
+        let currentSlide = 0
+        
+        showSlide(currentSlide)
+        submitButton.addEventListener("click", function(){
+            Swal.fire({
+                title: 'Apa kamu yakin mengakhiri menjawab?',
+                text: "",
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Iya',
+                cancelButtonText: 'Batal'
+                }).then((result) => {
+                    if (result.value) {
+                        results()
+                    }
+                })
+        })
+        nextButton.addEventListener("click", showNextSlide)
+        previousButton.addEventListener("click", showPreviousSlide)
+
+        let numberBtn = document.querySelector(".number-btn")
+        for(i=0; i<sliceQuestion.length; i++) {
+            let li = document.createElement("span")
+            li.innerHTML = `
+            <button type="button" class="btn btn-sm btn-outline-secondary mx-1 mt-2" onclick="paginationSlide(${i})">${i+1}</button>`
+            numberBtn.appendChild(li)
+        }
+
+        let showTime = document.querySelector("#time")
+        let startMinutes = 50
+        let seconds = 0
+
+        function countdown() {
+            setTimeout(countdown, 1000)
+            seconds = seconds < 10 ? '0' + seconds : seconds
+            showTime.innerHTML = `${startMinutes} : ${seconds}`
+
+            seconds--
+            if(seconds < 0) {
+                seconds = 59
+                startMinutes--
+            }
+
+            if(startMinutes < 0) {
+                startMinutes = 0
+                seconds = 0
+            }
+
+            if(startMinutes === 0 && seconds === 0)
+                results()
+            
+        }
+
+        countdown()
+        
+        const nameUser = document.querySelector(".name-user")
+        const localNameUser = localStorage.getItem("name")
+        nameUser.innerHTML = `<h6>${localNameUser}</h6>`
+
+    </script>
+</body>
+</html>

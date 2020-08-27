@@ -1,0 +1,44 @@
+.slide{
+    position: absolute;
+    left: 0px;
+    top: 0px;
+    width: 100%;
+    z-index: 1;
+    opacity: 0;
+    transition: opacity 0.1s;
+}
+.active-slide{
+    opacity: 1;
+    z-index: 2;
+}
+.card {
+    position: relative;
+}
+.quiz-container{
+    position: relative;
+    height: 800px;
+    margin-top: 40px;
+}
+.question{
+    font-size: 30px;
+    margin-bottom: 10px;
+}
+.answers {
+    margin-bottom: 20px;
+    text-align: left;
+    display: inline-block;
+}
+.answers label{
+    display: block;
+    margin-bottom: 10px;
+}
+@media only screen and(max-width: 500px){
+    .quiz-container{
+        height: 500px;
+    }
+}
+@media only screen and(max-width: 300px){
+    .quiz-container{
+        height: 700px;
+    }
+}
